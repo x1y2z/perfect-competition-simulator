@@ -7,7 +7,7 @@ Instead of only studying static textbook graphs, this simulator allows users to 
 
 Link: https://samp-mobile.shop/microecon
 
-<img width="1919" height="919" alt="image" src="https://github.com/user-attachments/assets/5f15fec7-571b-480f-84d4-f0b7858e5e9c" />
+<img width="1679" height="715" alt="image" src="https://github.com/user-attachments/assets/7f835b71-18b3-4639-a6fc-461ab9fcc455" />
 
 # Project Idea
 
