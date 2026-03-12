@@ -111,7 +111,7 @@ function updateSimulationFirm(){
     
     for(let i=0;i<mcArray.length;i++){ // loop of marginal costs
     
-        let q=i // quantity, no need 0 cuz 0 quantity 0$
+        let q=i+1 // quantity, no need 0 cuz 0 quantity 0$
         let mc=mcArray[i] // marginal cost
         
         VC+=mc // full variable cost
@@ -131,7 +131,7 @@ function updateSimulationFirm(){
     for (let i = 0; i < mcArray.length; i++) {
         let currentMC = mcArray[i];
         let nextMC = mcArray[i + 1];
-        let q = i;
+        let q = i+1;
 
         if (P >= currentMC) {
             if (nextMC !== undefined && P <= nextMC) {
