@@ -5,6 +5,8 @@ The project was created to help students better understand cost curves, market e
 
 Instead of only studying static textbook graphs, this simulator allows users to experiment with parameters and observe how the market adjusts in real time.
 
+Link: https://samp-mobile.shop/microecon
+
 <img width="1919" height="919" alt="image" src="https://github.com/user-attachments/assets/5f15fec7-571b-480f-84d4-f0b7858e5e9c" />
 
 # Project Idea
