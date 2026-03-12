@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Firm Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="info-container">
+        <h2>Perfect Competition Simulator</h2>
+    
+        Price (P=MR): <input type="range" id="priceSlider" min="1" max="20" value="5"><span id="priceValue">5</span><br><br>
+        Firms: <input type="range" id="firmsSlider" min="1" max="5" value="2"><span id="firmsValue">2</span><br><br>
+        Fixed Cost (FC): <input type="range" id="fcSlider" min="0" max="50" value="10"><span id="fcValue">10</span><br><br>
+        Marginal Costs (with ,): <br><input id="mcvalues" value="1,2,3,4,5,6,7,8,9" style="width:300px"><br><br>
+
+        <h3>Graphs to show</h3>
+
+        <label><input type="checkbox" id="showMC" checked> MC</label>
+        <label><input type="checkbox" id="showAVC"> AVC</label>
+        <label><input type="checkbox" id="showATC" checked> ATC</label>
+        <label><input type="checkbox" id="showAFC"> AFC</label>
+        <label><input type="checkbox" id="showPrice" checked> MR(Price)</label>
+    </div>
+
+    <div class="main-container">
+
+        <div class="demand-supply-container">
+            <canvas id="graph-demandsupply"></canvas>
+        </div>
+
+        <div class="firm-container">
+            <canvas id="graph-firm"></canvas>
+        </div>
+
+        <div class="results">
+            <h3>Results</h3>
+            <p id="results"></p>
+            <p id="results2"></p>
+        </div>
+
+    </div>
+
+    <script src="charts.js"></script>
+
+    <p class="creator">Created by Gor Grigoryan</p>
+
+</body>
+
+</html>

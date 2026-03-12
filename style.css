@@ -1,0 +1,79 @@
+body {
+    font-family:Arial;
+}
+h1{
+    text-align:center;
+}
+.main-container {
+    margin-top: 20px;
+    display:flex;
+    align-items:flex-start;
+    gap:40px;
+}
+.firm-container {
+    flex: 1;          /* graph takes remaining space */
+    min-width: 250px; /* prevents shrinking */
+    min-height: 500px;
+}
+.demand-supply-container {
+    flex: 1;          /* graph takes remaining space */
+    min-width: 250px; /* prevents shrinking */
+    min-height: 500px;
+}
+.info-container{
+    width:350px;
+
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.results {
+    width: 220px;
+}
+
+.footer{
+    margin-top: 80px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+input[type="range"]{
+    width:300px;
+    height:8px;
+    background:#ddd;
+    border-radius:5px;
+    outline:none;
+}
+
+/* slider handle */
+input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    appearance:none;
+    width:20px;
+    height:20px;
+    background:#000000;
+    border-radius:50%;
+    cursor:pointer;
+}
+
+/* track */
+input[type="range"]::-webkit-slider-runnable-track{
+    height:8px;
+    background:#ccc;
+    border-radius:5px;
+}
+
+input[type="range"]{
+    width:300px;
+    height:8px;
+}
+
+.creator{
+    font-size: 14px;
+    font-weight: normal;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
