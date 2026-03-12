@@ -82,7 +82,7 @@ function createChartFirm(){
                 }
             },
             scales:{
-                x:{title:{display:true,text:"Quantity"},min:0,max:20},
+                x:{title:{display:true,text:"Quantity"},min:0},
                 y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
