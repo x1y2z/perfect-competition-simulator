@@ -65,6 +65,7 @@ function createChartFirm(){
                 {label:"Average Fixed Cost (AFC)",data:[],showLine:true},
                 {label:"Marginal Revenue (Price=MR)",data:[],showLine:true},
                 {label:"Optimal Quantity",data:[],pointRadius:7},
+                {label:"Profit",data:[],fill:true,showLine:true,pointRadius:0, order:0},
             ]
         },
             
@@ -90,6 +91,79 @@ function createChartFirm(){
     
     })
 
+}
+
+// thanks to the guy from stackoverflow
+function findIntersection(p1, p2, p3, p4) {
+    // Standard line-line intersection formula
+    // (x1, y1) to (x2, y2) and (x3, y3) to (x4, y4)
+    const denominator = (p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y);
+    
+    if (denominator === 0) return null; // Parallel lines
+
+    let ua = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x)) / denominator;
+    
+    // Is the intersection point within the bounds of both segments?
+    if (ua >= 0 && ua <= 1) {
+        let ub = ((p2.x - p1.x) * (p1.y - p3.y) - (p2.y - p1.y) * (p1.x - p3.x)) / denominator;
+        if (ub >= 0 && ub <= 1) {
+            return {
+                x: p1.x + ua * (p2.x - p1.x),
+                y: p1.y + ua * (p2.y - p1.y)
+            };
+        }
+    }
+    return null;
+}
+
+// Use a nested loop to check every segment against every other segment
+function findEquilibrium(demand, supply) {
+    for (let i = 0; i < demand.length - 1; i++) {
+        for (let j = 0; j < supply.length - 1; j++) {
+            let point = findIntersection(demand[i], demand[i+1], supply[j], supply[j+1]);
+            if (point) return point;
+        }
+    }
+    return null;
+}
+
+// intersection of demand and priceline curve to find shortages, surpluses and etc
+function findConsumerSurplusPointDemand(demand, price) {
+    for (let i = 0; i < demand.length - 1; i++) {
+        for (let j = 0; j < price.length - 1; j++) {
+            let point = findIntersection(demand[i], demand[i+1], price[j], price[j+1]);
+            if (point) return point;
+        }
+    }
+    return null;
+}
+
+function findConsumerSurplusPointSupply(supply, price) {
+    for (let i = 0; i < supply.length - 1; i++) {
+        for (let j = 0; j < price.length - 1; j++) {
+            let point = findIntersection(supply[i], supply[i+1], price[j], price[j+1]);
+            if (point) return point;
+        }
+    }
+    return null;
+}
+
+function findPriceMarginalCost(marginalCost, price) {
+    for (let i = 0; i < marginalCost.length - 1; i++) {
+        for (let j = 0; j < price.length - 1; j++) {
+            let point = findIntersection(marginalCost[i], marginalCost[i+1], price[j], price[j+1]);
+            if (point) return point;
+        }
+    }
+    return null;
+}
+
+function interpolate(x, x1, y1, x2, y2) {
+  return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+}
+
+function getATCPoint(ATC, intersection) {
+    return interpolate(intersection.x, ATC[2].x, ATC[2].y, ATC[3].x, ATC[3].y)
 }
 
 function updateSimulationFirm(){
@@ -184,6 +258,12 @@ function updateSimulationFirm(){
     document.querySelectorAll("input[type=checkbox]").forEach(box=>{
         box.addEventListener("change",updateVisibilityFirm)
     })
+
+    let atcAtOptimalQ = (FC + totalVC) / optimalQ;
+    let profitMC = findPriceMarginalCost(MC, priceLine)
+    let profitCurve = [
+        {x:0,y:P},{x:optimalQ,y:P}, {x:optimalQ,y:atcAtOptimalQ}, {x:0,y:atcAtOptimalQ}, {x:0,y:P}
+    ]
     
     // setting info to charts
     chartFirm.data.datasets[0].data = MC
@@ -192,6 +272,7 @@ function updateSimulationFirm(){
     chartFirm.data.datasets[3].data = AFC
     chartFirm.data.datasets[4].data = priceLine
     chartFirm.data.datasets[5].data = [{x:optimalQ,y:P}]
+    chartFirm.data.datasets[6].data = profitCurve
     
     // updating chart with animation bla bla
     chartFirm.update()
@@ -200,61 +281,6 @@ function updateSimulationFirm(){
 
 function quantityDemanded(P){
     return 20 - P
-}
-
-// thanks to the guy from stackoverflow
-function findIntersection(p1, p2, p3, p4) {
-    // Standard line-line intersection formula
-    // (x1, y1) to (x2, y2) and (x3, y3) to (x4, y4)
-    const denominator = (p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y);
-    
-    if (denominator === 0) return null; // Parallel lines
-
-    let ua = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x)) / denominator;
-    
-    // Is the intersection point within the bounds of both segments?
-    if (ua >= 0 && ua <= 1) {
-        let ub = ((p2.x - p1.x) * (p1.y - p3.y) - (p2.y - p1.y) * (p1.x - p3.x)) / denominator;
-        if (ub >= 0 && ub <= 1) {
-            return {
-                x: p1.x + ua * (p2.x - p1.x),
-                y: p1.y + ua * (p2.y - p1.y)
-            };
-        }
-    }
-    return null;
-}
-
-// Use a nested loop to check every segment against every other segment
-function findEquilibrium(demand, supply) {
-    for (let i = 0; i < demand.length - 1; i++) {
-        for (let j = 0; j < supply.length - 1; j++) {
-            let point = findIntersection(demand[i], demand[i+1], supply[j], supply[j+1]);
-            if (point) return point;
-        }
-    }
-    return null;
-}
-
-// intersection of demand and priceline curve to find shortages, surpluses and etc
-function findConsumerSurplusPointDemand(demand, price) {
-    for (let i = 0; i < demand.length - 1; i++) {
-        for (let j = 0; j < price.length - 1; j++) {
-            let point = findIntersection(demand[i], demand[i+1], price[j], price[j+1]);
-            if (point) return point;
-        }
-    }
-    return null;
-}
-
-function findConsumerSurplusPointSupply(supply, price) {
-    for (let i = 0; i < supply.length - 1; i++) {
-        for (let j = 0; j < price.length - 1; j++) {
-            let point = findIntersection(supply[i], supply[i+1], price[j], price[j+1]);
-            if (point) return point;
-        }
-    }
-    return null;
 }
 
 function updateSimulationDemandSupply()
