@@ -24,6 +24,7 @@ The simulator demonstrates several core microeconomic concepts:
 1) Firm cost curves: Marginal Cost, Average Total Cost, Average Variable Cost, Average Fixed Cost
 2) Profit maximization point and how much profit the firm gains
 3) Market equillibrium: demand and supply curves intersection point
+4) Consumer and Producer surplus visualization
 
 # Technologies
 1) HTML - structure
