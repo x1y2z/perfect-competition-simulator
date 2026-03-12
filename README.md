@@ -14,7 +14,7 @@ Link: https://samp-mobile.shop/microecon
 Many students struggle to understand how marginal cost, average costs, demand, and supply curves interact in perfect competition.
 This simulator solves that problem by drawing graphs and updating them dynamically when parameters change.
 
-The demand curve is fixed: P=12−Q, while supply curve generates from quantity firm can produce (Marginal Costs count) multiplied by firms count.
+The demand curve is fixed: P=20-Q, while supply curve generates from quantity firm can produce (Marginal Costs count) multiplied by firms count.
 
 Users can adjust costs and price parameters to see how the market responds.
 

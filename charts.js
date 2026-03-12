@@ -46,7 +46,7 @@ function createChartDemandSupply()
             },
             scales:{
                 x:{title:{display:true,text:"Quantity"},min:0},
-                y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
+                y:{title:{display:true,text:"Price"},min:0,max:20} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
         }
@@ -83,7 +83,7 @@ function createChartFirm(){
             },
             scales:{
                 x:{title:{display:true,text:"Quantity"},min:0},
-                y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
+                y:{title:{display:true,text:"Price"},min:0,max:20} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
         }
@@ -100,18 +100,18 @@ function updateSimulationFirm(){
     let mcInput = document.getElementById("mcvalues").value
     let mcArray = mcInput.split(",").map(Number)
     
-    let MC=[]
-    let AVC=[]
-    let ATC=[]
+    let MC=[{x: 0, y: 0}]
+    let AVC=[{x: 0, y: 0}]
+    let ATC=[{x: 0, y: FC}]
     let AFC=[]
-    let priceLine=[]
+    let priceLine=[{x: 0, y: P}]
     
     let VC=0
     let optimalQ=0
     
     for(let i=0;i<mcArray.length;i++){ // loop of marginal costs
     
-        let q=i+1 // quantity, no need 0 cuz 0 quantity 0$
+        let q=i // quantity, no need 0 cuz 0 quantity 0$
         let mc=mcArray[i] // marginal cost
         
         VC+=mc // full variable cost
@@ -125,18 +125,43 @@ function updateSimulationFirm(){
         ATC.push({x:q,y:atc})
         AFC.push({x:q,y:afc})
         priceLine.push({x:q,y:P})
-        
-        if(mc<=P){ // if marginal cost is lower than price or marginal revenue that means that it is rational to produce
-            optimalQ=q
-        }
     
     }
+
+    for (let i = 0; i < mcArray.length; i++) {
+        let currentMC = mcArray[i];
+        let nextMC = mcArray[i + 1];
+        let q = i;
+
+        if (P >= currentMC) {
+            if (nextMC !== undefined && P <= nextMC) {
+                // Interpolate: q + fraction of the way to the next unit
+                let slope = nextMC - currentMC;
+                optimalQ = q + (P - currentMC) / slope;
+                break;
+            } else if (nextMC === undefined) {
+                optimalQ = q; // At the end of the array
+            }
+        }
+    }
     
-    let VCoptimal = mcArray.slice(0,optimalQ).reduce((a,b)=>a+b,0) // check in what quantity is optimal so only those variable costs are considered
-    let TC = FC + VCoptimal // so total cost will be equal fixed cost + variable cost of optimal one
+    let totalVC = 0;
+    if (optimalQ > 0) {
+        let fullUnits = Math.floor(optimalQ);
+        totalVC = mcArray.slice(0, fullUnits).reduce((a, b) => a + b, 0);
+        
+        // Add partial unit cost if interpolating
+        if (optimalQ > fullUnits && fullUnits < mcArray.length) {
+            let portion = optimalQ - fullUnits;
+            let mcAtPoint = mcArray[fullUnits - 1] + (mcArray[fullUnits] - mcArray[fullUnits - 1]) * portion;
+            totalVC += mcAtPoint * portion;
+        }
+    }
+
+    let TC = FC + totalVC // so total cost will be equal fixed cost + variable cost of optimal one
     let profit = P*optimalQ - TC // i think no need to say that profit = revenue-total cost
     
-    let avcAtQ = optimalQ>0 ? VCoptimal/optimalQ : 0 // it is average variable cost for OPTIMAL quantity
+    let avcAtQ = optimalQ>0 ? totalVC/optimalQ : 0 // it is average variable cost for OPTIMAL quantity
     
     let status=""
     
@@ -155,7 +180,7 @@ function updateSimulationFirm(){
         status="Firm get no profit and no loss"
     }
     
-    document.getElementById("results").innerHTML="Optimal Quantity: "+optimalQ+"<br>"+"Profit: "+profit.toFixed(2)+"<br>"+" "+status
+    document.getElementById("results").innerHTML="Optimal Quantity: "+optimalQ.toFixed(2)+"<br>"+"Profit: "+profit.toFixed(2)+"<br>"+" "+status
     document.querySelectorAll("input[type=checkbox]").forEach(box=>{
         box.addEventListener("change",updateVisibilityFirm)
     })
@@ -174,7 +199,7 @@ function updateSimulationFirm(){
 }
 
 function quantityDemanded(P){
-    return 12 - P
+    return 20 - P
 }
 
 // thanks to the guy from stackoverflow
@@ -241,7 +266,7 @@ function updateSimulationDemandSupply()
     let mcArray = mcInput.split(",").map(Number)
 
     let demand = []
-    let supply = []
+    let supply = [{x: 0, y: 0}]
     let maxQ = mcArray.length * firms
 
     for(let i = 0; i < mcArray.length; i++){
@@ -251,14 +276,11 @@ function updateSimulationDemandSupply()
     }
 
     for(let q = 0; q <= maxQ; q++){
-        if(12-q>=0) // demand here is constant but i will change it(i hope)
-            demand.push({x:Math.max(0, q),y:Math.max(0, 12 - q)})
+        if(20-q>=0) // demand here is constant but i will change it(i hope)
+            demand.push({x:Math.max(0, q),y:Math.max(0, 20 - q)})
     }
 
-    let priceLine = []
-    for(let q = 0; q <= mcArray.length*firms; q++){
-        priceLine.push({x:q, y:P}) // price line to synchronize with firm curve for better understanding of profits and losses
-    }
+    let priceLine = [{x:0,y:P}, {x:maxQ,y:P}]
 
     let equil = findEquilibrium(demand, supply) // finding equilibrium
     let currPriceDemand = findConsumerSurplusPointDemand(demand, priceLine)
@@ -316,7 +338,7 @@ function updateSimulationDemandSupply()
     else
         status = "Equillibrium"
 
-    document.getElementById("results2").innerHTML="Equilibrium quantity: "+equil.x+"<br> Equilibrium price: " + equil.y+"<br>"+
+    document.getElementById("results2").innerHTML="Equilibrium quantity: "+equil.x.toFixed(2)+"<br> Equilibrium price: " + equil.y.toFixed(2)+"<br>"+
         "Market price: " + P+"<br>"+status
 
     // updating info and curve
