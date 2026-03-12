@@ -46,7 +46,7 @@ function createChartDemandSupply()
             },
             scales:{
                 x:{title:{display:true,text:"Quantity"},min:0},
-                y:{title:{display:true,text:"Price"},min:0,max:20} // i set max 15 because my supply and demand curves are based on price and it will look awkward
+                y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
         }
@@ -84,7 +84,7 @@ function createChartFirm(){
             },
             scales:{
                 x:{title:{display:true,text:"Quantity"},min:0},
-                y:{title:{display:true,text:"Price"},min:0,max:20} // i set max 15 because my supply and demand curves are based on price and it will look awkward
+                y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
         }
@@ -176,7 +176,7 @@ function updateSimulationFirm(){
     
     let MC=[{x: 0, y: 0}]
     let AVC=[{x: 0, y: 0}]
-    let ATC=[{x: 0, y: FC}]
+    let ATC=[]
     let AFC=[]
     let priceLine=[{x: 0, y: P}]
     
@@ -280,7 +280,7 @@ function updateSimulationFirm(){
 }
 
 function quantityDemanded(P){
-    return 20 - P
+    return 10 - P
 }
 
 function updateSimulationDemandSupply()
@@ -302,8 +302,8 @@ function updateSimulationDemandSupply()
     }
 
     for(let q = 0; q <= maxQ; q++){
-        if(20-q>=0) // demand here is constant but i will change it(i hope)
-            demand.push({x:Math.max(0, q),y:Math.max(0, 20 - q)})
+        if(10-q>=0) // demand here is constant but i will change it(i hope)
+            demand.push({x:Math.max(0, q),y:Math.max(0, 10 - q)})
     }
 
     let priceLine = [{x:0,y:P}, {x:maxQ,y:P}]
