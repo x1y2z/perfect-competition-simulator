@@ -4,14 +4,14 @@
 <head>
     <title>Perfect Competition Simulator</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.css?v=1.1" /> 
 </head>
 <body>
 
     <div class="info-container">
         <h2>Perfect Competition Simulator</h2>
     
-        Price (P=MR): <input type="range" id="priceSlider" min="1" max="10" value="5" step="0.01"><span id="priceValue">5</span><br><br>
+        Price (P=MR): <input type="range" id="priceSlider" min="1" max="15" value="5" step="0.01"><span id="priceValue">5</span><br><br>
         Firms: <input type="range" id="firmsSlider" min="1" max="5" value="2"><span id="firmsValue">2</span><br><br>
         Fixed Cost (FC): <input type="range" id="fcSlider" min="0" max="50" value="10" step="0.01"><span id="fcValue">10</span><br><br>
         Marginal Costs (with ,): <br><input id="mcvalues" value="1,2,3,4,5,6,7,8,9,10" style="width:300px"><br><br>
@@ -45,7 +45,11 @@
 
     <script src="charts.js"></script>
 
-    <p class="creator">Created by Gor Grigoryan</p>
+    <div class="creator-container">
+        <a class="creator" href="https://github.com/x1y2z/perfect-competition-simulator">Github</a>
+        <p class="creator">Created by Gor Grigoryan</p>
+        <p class="creator">Telegram(Suggestions): @gorgrigoryannn</p>
+    </div>
 
 </body>
 

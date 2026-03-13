@@ -70,6 +70,13 @@ input[type="range"]{
     height:8px;
 }
 
+.creator-container {
+    display: flex;       /* Aligns items in a row */
+    gap: 20px;           /* Adds space between the items */
+    align-items: center; /* Keeps them vertically centered */
+    flex-wrap: wrap;     /* Ensures it looks good on mobile */
+}
+
 .creator{
     font-size: 14px;
     font-weight: normal;

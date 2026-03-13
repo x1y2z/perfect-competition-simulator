@@ -45,7 +45,7 @@ function createChartDemandSupply()
                 }
             },
             scales:{
-                x:{title:{display:true,text:"Quantity"},min:0},
+                x:{title:{display:true,text:"Quantity"},min:0, max:60}, // because people think that demand shift, not supply
                 y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
@@ -83,7 +83,7 @@ function createChartFirm(){
                 }
             },
             scales:{
-                x:{title:{display:true,text:"Quantity"},min:0},
+                x:{title:{display:true,text:"Quantity"},min:0, max:20}, // because people think that demand shift, not supply
                 y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
@@ -174,7 +174,7 @@ function updateSimulationFirm(){
     let mcInput = document.getElementById("mcvalues").value
     let mcArray = mcInput.split(",").map(Number)
     
-    let MC=[{x: 0, y: 0}]
+    let MC=[]
     let AVC=[{x: 0, y: 0}]
     let ATC=[]
     let AFC=[]
@@ -260,7 +260,6 @@ function updateSimulationFirm(){
     })
 
     let atcAtOptimalQ = (FC + totalVC) / optimalQ;
-    let profitMC = findPriceMarginalCost(MC, priceLine)
     let profitCurve = [
         {x:0,y:P},{x:optimalQ,y:P}, {x:optimalQ,y:atcAtOptimalQ}, {x:0,y:atcAtOptimalQ}, {x:0,y:P}
     ]
@@ -315,44 +314,48 @@ function updateSimulationDemandSupply()
     // try to understand please i will not explain this shit
     let consumerSurplus=[]
     if(P >= equil.y) {
-        consumerSurplus=[
-            {x:0,y:demand[0].y},
-            {x:demand[0].x,y:demand[0].y},
-            {x:0,y:currPriceDemand.y},
-            {x:currPriceDemand.x, y:currPriceDemand.y},
-            {x:0,y:demand[0].y}
-        ]
+        if(currPriceDemand) {consumerSurplus=[
+                {x:0,y:demand[0].y},
+                {x:demand[0].x,y:demand[0].y},
+                {x:0,y:currPriceDemand.y},
+                {x:currPriceDemand.x, y:currPriceDemand.y},
+                {x:0,y:demand[0].y}
+            ]
+        }
     }
     else{
-        consumerSurplus=[
-            {x:0,y:demand[0].y},
-            {x:demand[0].x,y:demand[0].y},
-            {x:equil.x,y:equil.y},
-            {x:currPriceSupply.x, y:currPriceSupply.y},
-            {x:0,y:P},
-            {x:0,y:demand[0].y}
-        ]
+        if(currPriceSupply) {consumerSurplus=[
+                {x:0,y:demand[0].y},
+                {x:demand[0].x,y:demand[0].y},
+                {x:equil.x,y:equil.y},
+                {x:currPriceSupply.x, y:currPriceSupply.y},
+                {x:0,y:P},
+                {x:0,y:demand[0].y}
+            ]
+        }
     }
 
     let producerSurplus=[]
     if(P <= equil.y) {
-        producerSurplus=[
-            {x:0,y:supply[0].y},
-            {x:supply[0].x,y:supply[0].y},
-            {x:currPriceSupply.x, y:currPriceSupply.y},
-            {x:0,y:currPriceSupply.y},
-            {x:0,y:supply[0].y}
-        ]
+        if(currPriceSupply) {producerSurplus=[
+                {x:0,y:supply[0].y},
+                {x:supply[0].x,y:supply[0].y},
+                {x:currPriceSupply.x, y:currPriceSupply.y},
+                {x:0,y:currPriceSupply.y},
+                {x:0,y:supply[0].y}
+            ]
+        }
     }
     else{
-        producerSurplus=[
-            {x:0,y:supply[0].y},
-            {x:supply[0].x,y:supply[0].y},
-            {x:equil.x,y:equil.y},
-            {x:currPriceDemand.x, y:currPriceDemand.y},
-            {x:0,y:P},
-            {x:0,y:supply[0].y}
-        ]
+        if(currPriceDemand) {producerSurplus=[
+                {x:0,y:supply[0].y},
+                {x:supply[0].x,y:supply[0].y},
+                {x:equil.x,y:equil.y},
+                {x:currPriceDemand.x, y:currPriceDemand.y},
+                {x:0,y:P},
+                {x:0,y:supply[0].y}
+            ]
+        }
     }
 
     // ok i think its easy just try to understand the states
@@ -364,8 +367,12 @@ function updateSimulationDemandSupply()
     else
         status = "Equillibrium"
 
+    let status2 = ""
+    if(priceLine[0].y > demand[0].y) // market price>WTP
+        status2 = "Nothing is sold, because market price is higher then willingness to spend(or pay) of the customer"
+
     document.getElementById("results2").innerHTML="Equilibrium quantity: "+equil.x.toFixed(2)+"<br> Equilibrium price: " + equil.y.toFixed(2)+"<br>"+
-        "Market price: " + P+"<br>"+status
+        "Market price: " + P+"<br>"+status+"<br><br>"+status2
 
     // updating info and curve
     chartDemandSupply.data.datasets[1].data = demand
