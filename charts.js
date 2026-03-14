@@ -175,7 +175,7 @@ function updateSimulationFirm(){
     let mcArray = mcInput.split(",").map(Number)
     
     let MC=[]
-    let AVC=[{x: 0, y: 0}]
+    let AVC=[]
     let ATC=[]
     let AFC=[]
     let priceLine=[{x: 0, y: P}]
@@ -238,13 +238,8 @@ function updateSimulationFirm(){
     let avcAtQ = optimalQ>0 ? totalVC/optimalQ : 0 // it is average variable cost for OPTIMAL quantity
     
     let status=""
-    
-    if(P < avcAtQ){ // if our price is even lower than average variable cost than go out bruh
-        optimalQ=0
-        profit=0
-        status="Shutdown (P < AVC)"
-    }
-    else if(profit>0){
+
+    if(profit>0){
         status="Firm gains profits"
     }
     else if(profit<0){
@@ -254,7 +249,16 @@ function updateSimulationFirm(){
         status="Firm get no profit and no loss"
     }
     
-    document.getElementById("results").innerHTML="Optimal Quantity: "+optimalQ.toFixed(2)+"<br>"+"Profit: "+profit.toFixed(2)+"<br>"+" "+status
+    if(P < avcAtQ || optimalQ == 0){ // if our price is even lower than average variable cost than go out bruh
+        optimalQ=0
+        profit=-FC
+        status="Shutdown (P < AVC)"
+        document.getElementById("results").innerHTML=status
+    }
+    else {
+        document.getElementById("results").innerHTML="Optimal Quantity: "+optimalQ.toFixed(2)+"<br>"+"Profit: "+profit.toFixed(2)+"<br>"+" "+status
+    }
+    
     document.querySelectorAll("input[type=checkbox]").forEach(box=>{
         box.addEventListener("change",updateVisibilityFirm)
     })
@@ -291,7 +295,7 @@ function updateSimulationDemandSupply()
     let mcArray = mcInput.split(",").map(Number)
 
     let demand = []
-    let supply = [{x: 0, y: 0}]
+    let supply = []
     let maxQ = mcArray.length * firms
 
     for(let i = 0; i < mcArray.length; i++){
@@ -316,9 +320,10 @@ function updateSimulationDemandSupply()
     if(P >= equil.y) {
         if(currPriceDemand) {consumerSurplus=[
                 {x:0,y:demand[0].y},
-                {x:demand[0].x,y:demand[0].y},
-                {x:0,y:currPriceDemand.y},
+                ...demand.filter(p => p.x <= equil.x),
                 {x:currPriceDemand.x, y:currPriceDemand.y},
+                {x:0,y:currPriceDemand.y},
+                {x:0,y:P},
                 {x:0,y:demand[0].y}
             ]
         }
@@ -326,7 +331,7 @@ function updateSimulationDemandSupply()
     else{
         if(currPriceSupply) {consumerSurplus=[
                 {x:0,y:demand[0].y},
-                {x:demand[0].x,y:demand[0].y},
+                ...demand.filter(p => p.x <= equil.x),
                 {x:equil.x,y:equil.y},
                 {x:currPriceSupply.x, y:currPriceSupply.y},
                 {x:0,y:P},
@@ -339,7 +344,7 @@ function updateSimulationDemandSupply()
     if(P <= equil.y) {
         if(currPriceSupply) {producerSurplus=[
                 {x:0,y:supply[0].y},
-                {x:supply[0].x,y:supply[0].y},
+                ...supply.filter(p => p.x <= equil.x),
                 {x:currPriceSupply.x, y:currPriceSupply.y},
                 {x:0,y:currPriceSupply.y},
                 {x:0,y:supply[0].y}
@@ -349,7 +354,7 @@ function updateSimulationDemandSupply()
     else{
         if(currPriceDemand) {producerSurplus=[
                 {x:0,y:supply[0].y},
-                {x:supply[0].x,y:supply[0].y},
+                ...supply.filter(p => p.x <= equil.x),
                 {x:equil.x,y:equil.y},
                 {x:currPriceDemand.x, y:currPriceDemand.y},
                 {x:0,y:P},
