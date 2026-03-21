@@ -6,6 +6,8 @@ in this language, so if you have any suggestion, you can write them.
 
 let chartFirm
 let chartDemandSupply
+
+let optimalQuantity = 0
         
 function updateVisibilityFirm(){
     chartFirm.setDatasetVisibility(0, document.getElementById("showMC").checked)
@@ -45,7 +47,7 @@ function createChartDemandSupply()
                 }
             },
             scales:{
-                x:{title:{display:true,text:"Quantity"},min:0, max:60}, // because people think that demand shift, not supply
+                x:{title:{display:true,text:"Quantity"},min:0, max:50}, // because people think that demand shift, not supply
                 y:{title:{display:true,text:"Price"},min:0,max:15} // i set max 15 because my supply and demand curves are based on price and it will look awkward
             }
         
@@ -280,6 +282,8 @@ function updateSimulationFirm(){
     // updating chart with animation bla bla
     chartFirm.update()
 
+    optimalQuantity = optimalQ
+
 }
 
 function quantityDemanded(P){
@@ -289,14 +293,16 @@ function quantityDemanded(P){
 function updateSimulationDemandSupply()
 {
     let P = parseFloat(document.getElementById("priceSlider").value)
-    let firms = parseFloat(document.getElementById("firmsSlider").value)
+    //let firms = parseFloat(document.getElementById("firmsSlider").value)
 
     let mcInput = document.getElementById("mcvalues").value
     let mcArray = mcInput.split(",").map(Number)
 
-    let demand = []
+    let firms = quantityDemanded(P) / optimalQuantity
+
+    let priceLine = [{x:0,y:P}, {x:50,y:P}]
+
     let supply = []
-    let maxQ = mcArray.length * firms
 
     for(let i = 0; i < mcArray.length; i++){
         let q = (i + 1) * firms// our supply is based how much quantity can produce firm * how much firms are there
@@ -304,12 +310,16 @@ function updateSimulationDemandSupply()
         supply.push({x:q, y:p})
     }
 
-    for(let q = 0; q <= maxQ; q++){
+    /*for(let q = 0; q <= maxQ; q++){
         if(10-q>=0) // demand here is constant but i will change it(i hope)
             demand.push({x:Math.max(0, q),y:Math.max(0, 10 - q)})
-    }
+    }*/ // i have found an easier method
 
-    let priceLine = [{x:0,y:P}, {x:maxQ,y:P}]
+    let demand = [
+        {x: 0, y: 10},
+        {x: 10, y: 0}
+    ];
+
 
     let equil = findEquilibrium(demand, supply) // finding equilibrium
     let currPriceDemand = findConsumerSurplusPointDemand(demand, priceLine)
@@ -377,7 +387,7 @@ function updateSimulationDemandSupply()
         status2 = "Nothing is sold, because market price is higher then willingness to spend(or pay) of the customer"
 
     document.getElementById("results2").innerHTML="Equilibrium quantity: "+equil.x.toFixed(2)+"<br> Equilibrium price: " + equil.y.toFixed(2)+"<br>"+
-        "Market price: " + P+"<br>"+status+"<br><br>"+status2
+        "Market price: " + P+"<br>"+status+"<br><br>"+status2+"<br>Firms in the market: "+firms.toFixed(2)*100
 
     // updating info and curve
     chartDemandSupply.data.datasets[1].data = demand
@@ -402,11 +412,6 @@ document.getElementById("fcSlider").addEventListener("input",function(){
 
 document.getElementById("mcvalues").addEventListener("input",function(){
     updateSimulationFirm()
-    updateSimulationDemandSupply()
-})
-
-document.getElementById("firmsSlider").addEventListener("input",function(){
-    document.getElementById("firmsValue").innerText=this.value
     updateSimulationDemandSupply()
 })
 
